@@ -46,7 +46,7 @@ h1 {
   }
 }
 p {
-  color: var(--grey-600)'
+  color: var(--grey-600);
 }
 .main-img{
   display: none;
