@@ -40,6 +40,18 @@ export const getAllJobs = createAsyncThunk(
     }
 );
 
+export const showStats = createAsyncThunk(
+    'allJobs/showStats',
+    async (_, thunkAPI) => {
+        try {
+            const resp = await customFetch.get('/jobs/stats');
+            console.log(resp.data);
+            return resp.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.response.data.msg);
+        }
+    }
+)
 const allJobsSlice = createSlice({
     name: 'allJobs',
     initialState,
@@ -66,6 +78,22 @@ const allJobsSlice = createSlice({
                     toast.error(payload);
                 } else {
                     toast.error('An error occurred while fetching jobs');
+                }
+            })
+            .addCase(showStats.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(showStats.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.stats = action.payload.defaultStats;
+                state.monthlyApplications = action.payload.monthlyApplications;
+            })
+            .addCase(showStats.rejected, (state, action) => {
+                state.isLoading = false;
+                if (action.payload) {
+                    toast.error(action.payload);
+                } else {
+                    toast.error('An error occurred while fetching stats');
                 }
             });
     },
